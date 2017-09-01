@@ -72,8 +72,9 @@ tagsInput.factory('tiUtil', function($timeout) {
         });
     };
 
-    self.safeToString = function(value) {
-        return angular.isUndefined(value) || value == null ? '' : value.toString().trim();
+    self.safeToString = function(value, keepSpaces) {
+        var stringValue = angular.isUndefined(value) || value == null ? '' : value.toString().trim();
+        return keepSpaces ? stringValue : stringValue.trim();
     };
 
     self.encodeHTML = function(value) {

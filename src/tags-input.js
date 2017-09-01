@@ -52,7 +52,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
         var self = {}, getTagText, setTagText, tagIsValid;
 
         getTagText = function(tag) {
-            return tiUtil.safeToString(tag[options.displayProperty]);
+            return tiUtil.safeToString(tag[options.displayProperty], options.keepSpaces);
         };
 
         setTagText = function(tag, text) {
@@ -173,6 +173,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, tagsInpu
                 tabindex: [Number, null],
                 removeTagSymbol: [String, String.fromCharCode(215)],
                 replaceSpacesWithDashes: [Boolean, true],
+                keepSpaces: [Boolean, false],
                 minLength: [Number, 3],
                 maxLength: [Number, MAX_SAFE_INTEGER],
                 addOnEnter: [Boolean, true],
