@@ -5,7 +5,7 @@
  * Copyright (c) 2013-2017 Michael Benford
  * License: MIT
  *
- * Generated at 2017-09-01 13:01:45 +0300
+ * Generated at 2017-09-01 13:42:57 +0300
  */
 (function() {
 'use strict';
@@ -1102,7 +1102,7 @@ tagsInput.factory('tiUtil', ["$timeout", function($timeout) {
     };
 
     self.safeToString = function(value, keepSpaces) {
-        var stringValue = angular.isUndefined(value) || value == null ? '' : value.toString().trim();
+        var stringValue = angular.isUndefined(value) || value == null ? '' : value.toString();
         return keepSpaces ? stringValue : stringValue.trim();
     };
 
