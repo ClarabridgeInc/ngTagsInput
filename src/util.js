@@ -73,7 +73,7 @@ tagsInput.factory('tiUtil', function($timeout, $q) {
     };
 
     self.safeToString = function(value, keepSpaces) {
-        var stringValue = angular.isUndefined(value) || value == null ? '' : value.toString().trim();
+        var stringValue = angular.isUndefined(value) || value == null ? '' : value.toString();
         return keepSpaces ? stringValue : stringValue.trim();
     };
 
