@@ -169,6 +169,7 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, $q, tags
         require: 'ngModel',
         scope: {
             tags: '=ngModel',
+            parentForm: '=?',
             text: '=?',
             templateScope: '=?',
             tagClass: '&',
@@ -258,6 +259,10 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, $q, tags
             };
         },
         link: function(scope, element, attrs, ngModelCtrl) {
+            if (scope.parentForm && scope.parentForm.$addControl) {
+                scope.parentForm.$addControl(ngModelCtrl);
+            }
+
             var hotkeys = [KEYS.enter, KEYS.comma, KEYS.space, KEYS.backspace, KEYS.delete, KEYS.left, KEYS.right],
                 tagList = scope.tagList,
                 events = scope.events,
