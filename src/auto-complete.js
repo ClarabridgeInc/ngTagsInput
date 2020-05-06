@@ -47,6 +47,9 @@ tagsInput.directive('autoComplete', function($document, $timeout, $sce, $q, tags
                         a = tiUtil.replaceSpacesWithDashes(a);
                         b = tiUtil.replaceSpacesWithDashes(b);
                     }
+                    if (!options.tagsInput.caseInsensitiveTags) {
+                        return a === b;
+                    }
                     return tiUtil.defaultComparer(a, b);
                 });
             });
