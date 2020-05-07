@@ -5,11 +5,9 @@
  * Copyright (c) 2013-2020 Michael Benford
  * License: MIT
  *
- * Generated at 2020-04-27 16:27:39 +0300
+ * Generated at 2020-05-06 17:29:15 -0400
  */
 (function() {
-'use strict';
-
 'use strict';
 
 var KEYS = {
@@ -29,11 +27,7 @@ var KEYS = {
 var MAX_SAFE_INTEGER = 9007199254740991;
 var SUPPORTED_INPUT_TYPES = ['text', 'email', 'url'];
 
-'use strict';
-
 var tagsInput = angular.module('ngTagsInput', []);
-
-'use strict';
 
 /**
  * @ngdoc directive
@@ -75,6 +69,7 @@ var tagsInput = angular.module('ngTagsInput', []);
  * @param {boolean=} [addFromAutocompleteOnly=false] Flag indicating that only tags coming from the autocomplete list
  *    will be allowed. When this flag is true, addOnEnter, addOnComma, addOnSpace and addOnBlur values are ignored.
  * @param {boolean=} [spellcheck=true] Flag indicating whether the browser's spellcheck is enabled for the input field or not.
+ * @param {boolean=} [caseInsensitiveTags=false] Flag indicating if tags are case insensitive or not
  * @param {expression=} [tagClass=NA] Expression to evaluate for each existing tag in order to get the CSS classes to be used.
  *    The expression is provided with the current tag as $tag, its index as $index and its state as $selected. The result
  *    of the evaluation must be one of the values supported by the ngClass directive (either a string, an array or an object).
@@ -104,11 +99,15 @@ tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "$q", "tag
 
         canAddTag = function(tag) {
             var tagText = getTagText(tag);
+            var comparer = options.caseInsensitiveTags
+                ? tiUtil.defaultComparer
+                : function(a, b) { return a === b; };
             var valid = tagText &&
                         tagText.length >= options.minLength &&
                         tagText.length <= options.maxLength &&
                         options.allowedTagsPattern.test(tagText) &&
-                        !tiUtil.findInObjectArray(self.items, tag, options.keyProperty || options.displayProperty);
+                        !tiUtil.findInObjectArray(
+                            self.items, tag, options.keyProperty || options.displayProperty, comparer);
 
             return $q.when(valid && onTagAdding({ $tag: tag })).then(tiUtil.promisifyValue);
         };
@@ -246,6 +245,7 @@ tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "$q", "tag
                 allowLeftoverText: [Boolean, false],
                 addFromAutocompleteOnly: [Boolean, false],
                 spellcheck: [Boolean, true],
+                caseInsesitiveTags: [Boolean, false],
                 useStrings: [Boolean, false]
             });
 
@@ -522,8 +522,6 @@ tagsInput.directive('tagsInput', ["$timeout", "$document", "$window", "$q", "tag
 }]);
 
 
-'use strict';
-
 /**
  * @ngdoc directive
  * @name tiTagItem
@@ -562,8 +560,6 @@ tagsInput.directive('tiTagItem', ["tiUtil", function(tiUtil) {
     };
 }]);
 
-
-'use strict';
 
 /**
  * @ngdoc directive
@@ -611,6 +607,9 @@ tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tag
                     if (options.tagsInput.replaceSpacesWithDashes) {
                         a = tiUtil.replaceSpacesWithDashes(a);
                         b = tiUtil.replaceSpacesWithDashes(b);
+                    }
+                    if (!options.tagsInput.caseInsensitiveTags) {
+                        return a === b;
                     }
                     return tiUtil.defaultComparer(a, b);
                 });
@@ -845,8 +844,6 @@ tagsInput.directive('autoComplete', ["$document", "$timeout", "$sce", "$q", "tag
 }]);
 
 
-'use strict';
-
 /**
  * @ngdoc directive
  * @name tiAutocompleteMatch
@@ -885,8 +882,6 @@ tagsInput.directive('tiAutocompleteMatch', ["$sce", "tiUtil", function($sce, tiU
 }]);
 
 
-'use strict';
-
 /**
  * @ngdoc directive
  * @name tiTranscludeAppend
@@ -902,8 +897,6 @@ tagsInput.directive('tiTranscludeAppend', function() {
         });
     };
 });
-
-'use strict';
 
 /**
  * @ngdoc directive
@@ -960,8 +953,6 @@ tagsInput.directive('tiAutosize', ["tagsInputConfig", function(tagsInputConfig) 
     };
 }]);
 
-'use strict';
-
 /**
  * @ngdoc directive
  * @name tiBindAttrs
@@ -979,8 +970,6 @@ tagsInput.directive('tiBindAttrs', function() {
         }, true);
     };
 });
-
-'use strict';
 
 /**
  * @ngdoc service
@@ -1088,8 +1077,6 @@ tagsInput.provider('tagsInputConfig', function() {
     }];
 });
 
-
-'use strict';
 
 /***
  * @ngdoc service
@@ -1224,22 +1211,17 @@ tagsInput.factory('tiUtil', ["$timeout", "$q", function($timeout, $q) {
 
 /* HTML templates */
 tagsInput.run(["$templateCache", function($templateCache) {
-  'use strict';
-
-  $templateCache.put('ngTagsInput/tags-input.html',
+    $templateCache.put('ngTagsInput/tags-input.html',
     "<div class=\"host\" tabindex=\"-1\" ng-click=\"eventHandlers.host.click()\" ti-transclude-append><div class=\"tags\" ng-class=\"{focused: hasFocus}\"><ul class=\"tag-list\"><li class=\"tag-item\" ng-repeat=\"tag in tagList.items track by track(tag)\" ng-class=\"getTagClass(tag, $index)\" ng-click=\"eventHandlers.tag.click(tag)\"><ti-tag-item scope=\"templateScope\" data=\"::tag\"></ti-tag-item></li></ul><input class=\"input\" autocomplete=\"off\" ng-model=\"newTag.text\" ng-model-options=\"{getterSetter: true}\" ng-keydown=\"eventHandlers.input.keydown($event)\" ng-focus=\"eventHandlers.input.focus($event)\" ng-blur=\"eventHandlers.input.blur($event)\" ng-paste=\"eventHandlers.input.paste($event)\" ng-trim=\"false\" ng-class=\"{'invalid-tag': newTag.invalid}\" ng-disabled=\"disabled\" ti-bind-attrs=\"{type: options.type, placeholder: options.placeholder, tabindex: options.tabindex, spellcheck: options.spellcheck}\" ti-autosize></div></div>"
   );
-
 
   $templateCache.put('ngTagsInput/tag-item.html',
     "<span ng-bind=\"$getDisplayText()\"></span> <a class=\"remove-button\" ng-click=\"$removeTag()\" ng-bind=\"::$$removeTagSymbol\"></a>"
   );
 
-
   $templateCache.put('ngTagsInput/auto-complete.html',
     "<div class=\"autocomplete\" ng-if=\"suggestionList.visible\"><ul class=\"suggestion-list\"><li class=\"suggestion-item\" ng-repeat=\"item in suggestionList.items track by track(item)\" ng-class=\"getSuggestionClass(item, $index)\" ng-click=\"addSuggestionByIndex($index)\" ng-mouseenter=\"suggestionList.select($index)\"><ti-autocomplete-match scope=\"templateScope\" data=\"::item\"></ti-autocomplete-match></li></ul></div>"
   );
-
 
   $templateCache.put('ngTagsInput/auto-complete-match.html',
     "<span ng-bind-html=\"$highlight($getDisplayText())\"></span>"
