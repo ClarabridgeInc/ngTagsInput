@@ -201,7 +201,8 @@ export default function TagsInputDirective($timeout, $document, $window, $q, tag
         allowLeftoverText: [Boolean, false],
         addFromAutocompleteOnly: [Boolean, false],
         spellcheck: [Boolean, true],
-        useStrings: [Boolean, false]
+        useStrings: [Boolean, false],
+        inputName: [String, 'tags']
       });
 
       $scope.tagList = new TagList($scope.options, $scope.events,
