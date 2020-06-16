@@ -217,7 +217,8 @@ tagsInput.directive('tagsInput', function($timeout, $document, $window, $q, tags
                 addFromAutocompleteOnly: [Boolean, false],
                 spellcheck: [Boolean, true],
                 caseInsesitiveTags: [Boolean, false],
-                useStrings: [Boolean, false]
+                useStrings: [Boolean, false],
+                inputName: [String, 'tags']
             });
 
             $scope.tagList = new TagList($scope.options, $scope.events,
